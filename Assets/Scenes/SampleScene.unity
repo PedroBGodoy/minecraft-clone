@@ -152,7 +152,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &778860418
 MonoBehaviour:
@@ -166,17 +166,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdcf13669095acf4797c952ea581c2f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Material: {fileID: 2100000, guid: 917636a2416a7dc478ccf69ea09e3add, type: 2}
+  player: {fileID: 1899914114}
+  spawnPosition: {x: 0, y: 0, z: 0}
+  Material: {fileID: 2100000, guid: de710ee24cec39e49b062c1a231c27a4, type: 2}
   BlockTypes:
-  - BlockName: Default
-    IsSolid: 1
-    backFaceTexture: 0
-    frontFaceTexture: 0
-    topFaceTexture: 0
-    bottomFaceTexture: 0
-    leftFaceTexture: 0
-    rightFaceTexture: 0
-  - BlockName: Test2
+  - BlockName: Air
+    IsSolid: 0
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 17
+    bottomFaceTexture: 17
+    leftFaceTexture: 17
+    rightFaceTexture: 17
+  - BlockName: Stone
     IsSolid: 1
     backFaceTexture: 1
     frontFaceTexture: 1
@@ -184,109 +186,22 @@ MonoBehaviour:
     bottomFaceTexture: 1
     leftFaceTexture: 1
     rightFaceTexture: 1
-  - BlockName: Test3
+  - BlockName: Grass
     IsSolid: 1
-    backFaceTexture: 2
-    frontFaceTexture: 2
-    topFaceTexture: 3
+    backFaceTexture: 3
+    frontFaceTexture: 3
+    topFaceTexture: 0
     bottomFaceTexture: 2
-    leftFaceTexture: 2
-    rightFaceTexture: 2
---- !u!1 &1176986153
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1176986157}
-  - component: {fileID: 1176986156}
-  - component: {fileID: 1176986155}
-  - component: {fileID: 1176986154}
-  m_Layer: 0
-  m_Name: Chunk
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1176986154
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1176986153}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49d8eeb739af1ec479d9d073bb37a281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  meshFilter: {fileID: 1176986155}
---- !u!33 &1176986155
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1176986153}
-  m_Mesh: {fileID: 0}
---- !u!23 &1176986156
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1176986153}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 917636a2416a7dc478ccf69ea09e3add, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!4 &1176986157
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1176986153}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+    leftFaceTexture: 3
+    rightFaceTexture: 3
+  - BlockName: Bedrock
+    IsSolid: 1
+    backFaceTexture: 17
+    frontFaceTexture: 17
+    topFaceTexture: 17
+    bottomFaceTexture: 17
+    leftFaceTexture: 17
+    rightFaceTexture: 17
 --- !u!1 &1837028866
 GameObject:
   m_ObjectHideFlags: 0

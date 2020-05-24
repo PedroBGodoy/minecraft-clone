@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class VoxelData : MonoBehaviour
 {
-
     public static readonly int ChunkWidth = 5;
-    public static readonly int ChunkHeight = 5;
+    public static readonly int ChunkHeight = 16;
+    public static readonly int WorldSizeInChunks = 100;
+    public static int WorldSizeInVoxels => WorldSizeInChunks * ChunkWidth;
 
-    public static readonly int TextureAtlasSizeInBlcks = 4;
+    public static readonly int ViewDistanceInChunks = 5;
+
+    public static readonly int TextureAtlasSizeInBlcks = 16;
     public static float NormalizedBlockTextureSize => 1f / TextureAtlasSizeInBlcks;
 
     public static readonly Vector3[] voxelVertes = new Vector3[8] {
