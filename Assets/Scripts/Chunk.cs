@@ -72,7 +72,8 @@ public class Chunk
             {
                 for (int z = 0; z < VoxelData.ChunkWidth; z++)
                 {
-                    AddVoxelDataToChunk(new Vector3(x, y, z));
+                    if (_world.BlockTypes[voxelMap[x, y, z]].IsSolid)
+                        AddVoxelDataToChunk(new Vector3(x, y, z));
                 }
             }
         }

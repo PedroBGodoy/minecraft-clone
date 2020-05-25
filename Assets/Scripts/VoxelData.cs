@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class VoxelData : MonoBehaviour
 {
-    public static readonly int ChunkWidth = 5;
-    public static readonly int ChunkHeight = 16;
-    public static readonly int WorldSizeInChunks = 100;
+    public static readonly int ChunkWidth = 16;
+    public static readonly int ChunkHeight = 128;
+    public static readonly int WorldSizeInChunks = 50;
     public static int WorldSizeInVoxels => WorldSizeInChunks * ChunkWidth;
 
     public static readonly int ViewDistanceInChunks = 5;
