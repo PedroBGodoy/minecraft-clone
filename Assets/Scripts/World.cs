@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class World : MonoBehaviour
@@ -18,6 +19,9 @@ public class World : MonoBehaviour
     private ChunkCoord playerLastChunkCoord;
     private ChunkCoord playerCurrentChunkCoord;
 
+    private List<ChunkCoord> chunksToCreate = new List<ChunkCoord>();
+    private bool isCreatingChunks = false;
+
     private void Start()
     {
         Random.InitState(seed);
@@ -26,7 +30,7 @@ public class World : MonoBehaviour
         GenerateWorld();
 
         player.position = spawnPosition;
-        playerLastChunkCoord = GetChunkCoodFromVector3(spawnPosition);
+        playerCurrentChunkCoord = playerLastChunkCoord = GetChunkCoodFromVector3(spawnPosition);
     }
 
     private void Update()
@@ -38,6 +42,9 @@ public class World : MonoBehaviour
             CheckViewDistance();
             playerLastChunkCoord = playerCurrentChunkCoord;
         }
+
+        if (chunksToCreate.Count > 0 && !isCreatingChunks)
+            StartCoroutine("CreateChunks");
     }
 
     private void GenerateWorld()
@@ -46,9 +53,24 @@ public class World : MonoBehaviour
         {
             for (int z = (VoxelData.WorldSizeInChunks / 2) - VoxelData.ViewDistanceInChunks; z < (VoxelData.WorldSizeInChunks / 2) + VoxelData.ViewDistanceInChunks; z++)
             {
-                CreateChunk(x, z);
+                chunks[x, z] = new Chunk(new ChunkCoord(x, z), this, true); ;
+                chunksToCreate.Add(new ChunkCoord(x, z));
             }
         }
+    }
+
+    IEnumerator CreateChunks()
+    {
+        isCreatingChunks = true;
+
+        while (chunksToCreate.Count > 0)
+        {
+            chunks[chunksToCreate[0].x, chunksToCreate[0].z].Init();
+            chunksToCreate.RemoveAt(0);
+            yield return null;
+        }
+
+        isCreatingChunks = false;
     }
 
     private ChunkCoord GetChunkCoodFromVector3(Vector3 position) => new ChunkCoord(Mathf.FloorToInt(position.x / VoxelData.ChunkWidth), Mathf.FloorToInt(position.z / VoxelData.ChunkWidth));
@@ -62,11 +84,15 @@ public class World : MonoBehaviour
         {
             for (int z = chunkPosition.z - VoxelData.ViewDistanceInChunks; z < chunkPosition.z + VoxelData.ViewDistanceInChunks; z++)
             {
-                if (IsChunkInWorld(new ChunkCoord(x, z)) && chunks[x, z] == null)
-                    CreateChunk(x, z);
-                else if (!chunks[x, z].IsActive)
+                if (IsChunkInWorld(new ChunkCoord(x, z)))
                 {
-                    chunks[x, z].IsActive = true;
+                    if (chunks[x, z] == null)
+                    {
+                        chunks[x, z] = new Chunk(new ChunkCoord(x, z), this, false);
+                        chunksToCreate.Add(new ChunkCoord(x, z));
+                    }
+                    else if (!chunks[x, z].isActive)
+                        chunks[x, z].isActive = true;
                     activeChunks.Add(new ChunkCoord(x, z));
                 }
 
@@ -80,8 +106,22 @@ public class World : MonoBehaviour
 
         foreach (ChunkCoord chunk in previouslyActiveChunks)
         {
-            chunks[chunk.x, chunk.z].IsActive = false;
+            chunks[chunk.x, chunk.z].isActive = false;
         }
+    }
+
+    public bool CheckForVoxel(Vector3 voxelPosition)
+    {
+        ChunkCoord thisChunkCoord = new ChunkCoord(voxelPosition);
+
+        if (IsVoxelInWorld(voxelPosition) || voxelPosition.y < 0 || voxelPosition.y > VoxelData.ChunkHeight)
+            return false;
+
+        Chunk thisChunk = chunks[thisChunkCoord.x, thisChunkCoord.z];
+        if (thisChunk != null && thisChunk.isVoxelMapPopulated)
+            return BlockTypes[thisChunk.GetVoxelFromGlobalVector3(voxelPosition)].IsSolid;
+
+        return BlockTypes[GetVoxel(voxelPosition)].IsSolid;
     }
 
     public byte GetVoxel(Vector3 voxelPosition)
@@ -116,12 +156,6 @@ public class World : MonoBehaviour
             }
         }
         return voxelValue;
-    }
-
-    private void CreateChunk(int x, int z)
-    {
-        chunks[x, z] = new Chunk(new ChunkCoord(x, z), this); ;
-        activeChunks.Add(new ChunkCoord(x, z));
     }
 
     private bool IsChunkInWorld(ChunkCoord chunkPosition) =>

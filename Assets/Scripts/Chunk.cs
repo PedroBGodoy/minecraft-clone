@@ -15,13 +15,20 @@ public class Chunk
     private int _vertexIndex = 0;
 
     private byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
-
     private World _world;
 
-    public bool IsActive
+    public bool isVoxelMapPopulated = false;
+
+    private bool _isActive;
+    public bool isActive
     {
-        get { return chunkObject.activeSelf; }
-        set { chunkObject.SetActive(value); }
+        get { return _isActive; }
+        set
+        {
+            _isActive = value;
+            if (chunkObject != null)
+                chunkObject.SetActive(value);
+        }
     }
 
     public Vector3 ChunkUnityPosition => chunkObject.transform.position;
@@ -31,19 +38,26 @@ public class Chunk
         voxelPosition.y >= 0 && voxelPosition.y < VoxelData.ChunkHeight &&
         voxelPosition.z >= 0 && voxelPosition.z < VoxelData.ChunkWidth;
 
-    public Chunk(ChunkCoord _chunkPosition, World world)
+    public Chunk(ChunkCoord _chunkPosition, World world, bool generateOnLoad)
     {
         chunkPosition = _chunkPosition;
         _world = world;
+        isActive = true;
 
+        if (generateOnLoad)
+            Init();
+    }
+
+    public void Init()
+    {
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
 
-        meshRenderer.material = world.Material;
-        chunkObject.transform.SetParent(world.transform);
-        chunkObject.transform.position = new Vector3(_chunkPosition.x * VoxelData.ChunkWidth, 0, _chunkPosition.z * VoxelData.ChunkWidth);
-        chunkObject.name = $"Chunk {_chunkPosition.x},{_chunkPosition.z}";
+        meshRenderer.material = _world.Material;
+        chunkObject.transform.SetParent(_world.transform);
+        chunkObject.transform.position = new Vector3(chunkPosition.x * VoxelData.ChunkWidth, 0, chunkPosition.z * VoxelData.ChunkWidth);
+        chunkObject.name = $"Chunk {chunkPosition.x},{chunkPosition.z}";
 
         PopulateVoxelMap();
         CreateMeshData();
@@ -62,6 +76,8 @@ public class Chunk
                 }
             }
         }
+
+        isVoxelMapPopulated = true;
     }
 
     private void CreateMeshData()
@@ -86,9 +102,21 @@ public class Chunk
         int z = Mathf.FloorToInt(voxelPosition.z);
 
         if (!IsVoxelInChunk(voxelPosition))
-            return _world.BlockTypes[_world.GetVoxel(voxelPosition + this.ChunkUnityPosition)].IsSolid;
+            return _world.CheckForVoxel(voxelPosition + ChunkUnityPosition);
 
         return _world.BlockTypes[voxelMap[x, y, z]].IsSolid;
+    }
+
+    public byte GetVoxelFromGlobalVector3(Vector3 voxelPosition)
+    {
+        int xCheck = Mathf.FloorToInt(voxelPosition.x);
+        int yCheck = Mathf.FloorToInt(voxelPosition.y);
+        int zCheck = Mathf.FloorToInt(voxelPosition.z);
+
+        xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
+        zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
+
+        return voxelMap[xCheck, yCheck, zCheck];
     }
 
     private void AddVoxelDataToChunk(Vector3 voxelPosition)
@@ -152,10 +180,25 @@ public class ChunkCoord
     public int x;
     public int z;
 
+    public ChunkCoord()
+    {
+        x = 0;
+        z = 0;
+    }
+
     public ChunkCoord(int _x, int _z)
     {
         x = _x;
         z = _z;
+    }
+
+    public ChunkCoord(Vector3 pos)
+    {
+        int xCheck = Mathf.FloorToInt(pos.x);
+        int zCheck = Mathf.FloorToInt(pos.z);
+
+        x = xCheck / VoxelData.ChunkWidth;
+        z = zCheck / VoxelData.ChunkWidth;
     }
 
     public bool Equals(ChunkCoord other) => other != null && x == other.x && z == other.z;
